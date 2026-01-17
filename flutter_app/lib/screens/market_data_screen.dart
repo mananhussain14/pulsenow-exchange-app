@@ -13,46 +13,78 @@ class _MarketDataScreenState extends State<MarketDataScreen> {
   @override
   void initState() {
     super.initState();
-    // TODO: Load market data when screen initializes
-    // Provider.of<MarketDataProvider>(context, listen: false).loadMarketData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<MarketDataProvider>(context, listen: false).loadMarketData();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<MarketDataProvider>(
       builder: (context, provider, child) {
-        // TODO: Implement the UI
-        // Show loading indicator when provider.isLoading is true
-        // Show error message when provider.error is not null
-        // Show list of market data when provider.marketData is available
-        // Each list item should show:
-        //   - Symbol (e.g., "BTC/USD")
-        //   - Price (formatted as currency)
-        //   - 24h change (with color: green for positive, red for negative)
-        // Implement pull-to-refresh using RefreshIndicator
-        
         if (provider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        
+
         if (provider.error != null) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Error: ${provider.error}'),
-                ElevatedButton(
-                  onPressed: () => provider.loadMarketData(),
-                  child: const Text('Retry'),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    provider.error!,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: provider.loadMarketData,
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
             ),
           );
         }
-        
-        // TODO: Replace this placeholder with actual list implementation
-        return const Center(
-          child: Text('Market Data Screen - To be implemented'),
+
+        return RefreshIndicator(
+          onRefresh: provider.loadMarketData,
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: provider.marketData.length,
+            itemBuilder: (context, index) {
+              final item = provider.marketData[index];
+              final isPositive = item.change24h >= 0;
+              final changeColor = isPositive ? Colors.green : Colors.red;
+
+              return ListTile(
+                title: Text(
+                  item.symbol,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                subtitle: Text('\$${item.price.toStringAsFixed(2)}'),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${isPositive ? '+' : ''}${item.change24h.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        color: changeColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${isPositive ? '+' : ''}${item.changePercent24h.toStringAsFixed(2)}%',
+                      style: TextStyle(color: changeColor),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         );
       },
     );

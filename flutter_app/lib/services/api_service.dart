@@ -4,22 +4,25 @@ import '../utils/constants.dart';
 
 class ApiService {
   static const String baseUrl = AppConstants.baseUrl;
-  
-  // TODO: Implement getMarketData() method
-  // This should call GET /api/market-data and return the response
-  // Example:
-  // Future<List<Map<String, dynamic>>> getMarketData() async {
-  //   final response = await http.get(Uri.parse('$baseUrl/market-data'));
-  //   if (response.statusCode == 200) {
-  //     final jsonData = json.decode(response.body);
-  //     return List<Map<String, dynamic>>.from(jsonData['data']);
-  //   } else {
-  //     throw Exception('Failed to load market data: ${response.statusCode}');
-  //   }
-  // }
-  
+
   Future<List<Map<String, dynamic>>> getMarketData() async {
-    // TODO: Implement this method
-    throw UnimplementedError('getMarketData() not implemented');
+    final uri = Uri.parse('$baseUrl/market-data');
+    final response = await http.get(uri);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to load market data');
+    }
+
+    final decoded = json.decode(response.body);
+
+    if (decoded is Map && decoded['data'] is List) {
+      return List<Map<String, dynamic>>.from(decoded['data']);
+    }
+
+    if (decoded is List) {
+      return List<Map<String, dynamic>>.from(decoded);
+    }
+
+    return [];
   }
 }

@@ -5,30 +5,41 @@ import '../utils/constants.dart';
 
 class WebSocketService {
   WebSocketChannel? _channel;
-  StreamController<Map<String, dynamic>>? _controller;
-  
-  // TODO: Implement WebSocket connection
-  // - connect()
-  // - disconnect()
-  // - Stream<Map<String, dynamic>> get stream
-  // - Handle real-time market updates
-  
-  Stream<Map<String, dynamic>>? get stream => _controller?.stream;
-  
+  final StreamController<Map<String, dynamic>> _controller = StreamController<Map<String, dynamic>>.broadcast();
+
+  Stream<Map<String, dynamic>> get stream => _controller.stream;
+
   void connect() {
-    // TODO: Implement WebSocket connection to AppConstants.wsUrl
-    // Parse incoming messages and add to stream
-    // Example:
-    // _controller = StreamController<Map<String, dynamic>>.broadcast();
-    // _channel = WebSocketChannel.connect(Uri.parse(AppConstants.wsUrl));
-    // _channel!.stream.listen((message) {
-    //   final data = json.decode(message);
-    //   _controller?.add(data);
-    // });
+    try {
+      _channel = WebSocketChannel.connect(Uri.parse(AppConstants.wsUrl));
+
+      _channel!.stream.listen(
+            (message) {
+          final data = json.decode(message);
+          _controller.add(data);
+        },
+        onError: (error) {
+          print('WebSocket Error: $error');
+          _reconnect();
+        },
+        onDone: () {
+          print('WebSocket Connection Closed');
+          _reconnect();
+        },
+      );
+    } catch (e) {
+      print('WebSocket Connection Exception: $e');
+    }
   }
-  
+
+  void _reconnect() {
+    Future.delayed(const Duration(seconds: 5), () {
+      connect();
+    });
+  }
+
   void disconnect() {
     _channel?.sink.close();
-    _controller?.close();
+    // Don't close _controller if you want to reuse the service
   }
 }
