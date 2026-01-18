@@ -1,30 +1,38 @@
-# PulseNow Flutter Developer Assessment
 
-This repository contains the take-home assessment for the Flutter Developer position at PulseNow.
+# PulseNow Flutter Assessment
 
-## Project Structure
+This repository contains my submission for the **PulseNow Flutter Developer take-home assessment**.
 
-```
-.
-├── backend/              # Node.js backend API with mock data
-│   ├── controllers/      # API route controllers
-│   ├── data/            # Mock data generators
-│   ├── middlewares/     # Express middlewares
-│   └── server.js        # Main server file
-│
-├── flutter_app/         # Flutter application (to be completed)
-│   └── lib/
-│       ├── models/      # Data models
-│       ├── services/    # API and WebSocket services
-│       ├── providers/   # State management
-│       └── screens/     # UI screens
-│
-└── ASSESSMENT.md        # Detailed assessment instructions
-```
+The task focuses on building a Flutter app that displays **crypto market data** using the provided backend API.
 
-## Quick Start
+---
 
-### 1. Start the Backend
+## What the app does
+
+* Fetches market data from the backend
+* Displays a list of crypto symbols with:
+
+  * Current price
+  * 24h change and percentage change
+* Color coding:
+
+  * Green for positive change
+  * Red for negative change
+* Handles loading, error (with retry), and empty states
+* Supports pull-to-refresh
+
+---
+
+## Tech stack
+
+* Flutter (3.x)
+* Provider (state management)
+* http (REST API)
+* Material 3
+
+---
+
+## Backend setup
 
 ```bash
 cd backend
@@ -32,37 +40,34 @@ npm install
 npm start
 ```
 
-The backend will run on `http://localhost:3000`
+Backend runs on:
 
-### 2. Start the Flutter App
+```
+http://localhost:3000
+```
+
+---
+
+## Running the app
 
 ```bash
-cd flutter_app
 flutter pub get
 flutter run
 ```
 
-## Assessment Overview
+For Android emulator, the app uses `10.0.2.2` to access the backend.
+This is already configured in the project.
 
-This is a focused assessment that tests your ability to:
+---
 
-- Integrate Flutter apps with REST APIs
-- Implement state management with Provider
-- Create UI components for displaying data
-- Handle loading and error states
-- Write clean, maintainable code
+## Scope note
 
-See `ASSESSMENT.md` for detailed requirements and evaluation criteria.
+The required scope of the assessment focuses on the **Market Data** feature.
+Although the backend exposes additional endpoints (analytics, portfolio), this submission intentionally focuses on delivering a clean and complete Market Data implementation.
 
-## Backend API
+---
 
-The backend provides a simple **Market Data API** endpoint:
-- `GET /api/market-data` - Returns list of crypto symbols with prices and 24h changes
+## Author
 
-See `backend/README.md` for API documentation.
+**Manan Hussain**
 
-## Questions?
-
-Contact the hiring team if you have any questions.
-
-Good luck! 🚀
