@@ -19,8 +19,7 @@ class MarketDataProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final data = await _apiService.getMarketData();
-      _marketData = data.map((e) => MarketData.fromJson(e)).toList();
+      _marketData = await _apiService.getMarketData();
     } catch (e) {
       _error = e.toString();
       _marketData = [];
@@ -29,4 +28,5 @@ class MarketDataProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
 }

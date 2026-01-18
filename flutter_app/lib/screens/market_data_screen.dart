@@ -47,6 +47,19 @@ class _MarketDataScreenState extends State<MarketDataScreen> {
             ),
           );
         }
+        if (provider.marketData.isEmpty) {
+          return RefreshIndicator(
+            onRefresh: provider.loadMarketData,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: const [
+                SizedBox(height: 120),
+                Center(child: Text('No market data available')),
+              ],
+            ),
+          );
+        }
+
 
         return RefreshIndicator(
           onRefresh: provider.loadMarketData,
